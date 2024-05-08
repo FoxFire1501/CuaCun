@@ -6,7 +6,7 @@ export default {
         clientID: "",
         clientSecret: "",
         prefix: ".",
-        channelErr: "1227233438525030440",
+        channelErr: "1230821361539219526",
         Status: {
             lab: "",
             type:  ActivityType.Watching,

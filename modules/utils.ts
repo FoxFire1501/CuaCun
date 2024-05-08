@@ -62,3 +62,21 @@ export async function getChannelID(channel: string | undefined) {
 
     return output;
 }
+
+export async function formatNumber(number:Number) {
+    let numString : string = number.toString();
+
+    if (numString.length > 3) {
+        let prats: string[] = [];
+        while (numString.length > 3) {
+            prats.unshift(numString.slice(-3));
+            numString = numString.slice(0, -3);
+        }
+
+        prats.unshift(numString);
+
+        return prats.join(".")
+    } else {
+        return numString;
+    }
+}
