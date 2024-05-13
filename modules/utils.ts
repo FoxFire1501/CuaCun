@@ -75,7 +75,7 @@ export async function formatNumber(number:Number) {
 
         prats.unshift(numString);
 
-        return prats.join(".")
+        return prats.filter(t => !t.startsWith("-")).join(".")
     } else {
         return numString;
     }

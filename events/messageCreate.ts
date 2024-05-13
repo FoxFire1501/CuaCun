@@ -30,8 +30,27 @@ async function messageCommand(message: Message) {
     if (!command) return;
 
     if (!bot.owners.includes(message.author.id)) {
-        if (command.ownerOnly) return message.reply("bạn khống có quyền dùng lệnh này>");
-        if (!bot.managers.includes(message.author.id) && command.managerOnly) return message.reply("bạn khống có quyền dùng lệnh này>");
+        let isM = false
+        if (command.ownerOnly) return message.reply({
+            embeds: [
+                {
+                    description: config.emojis.error + "bạn khống có quyền dùng lệnh này",
+                    color: config.bot.Embed.ColorSuccess
+                }
+             ]
+        });
+        bot.managers.forEach(i => {
+            if (message.member?.roles.cache.get(i)) isM = true
+        })
+        if (command.managerOnly)
+            if (!isM) return message.reply({
+                embeds: [
+                    {
+                        description: config.emojis.error + "bạn khống có quyền dùng lệnh này",
+                        color: config.bot.Embed.ColorSuccess
+                    }
+                 ]
+            });
     }
 
     if (!(message.channel instanceof ThreadChannel))

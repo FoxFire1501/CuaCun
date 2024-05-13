@@ -2,6 +2,7 @@
   "dependencies": {
     "better-sqlite3": "^9.6.0",
     "canvas": "^2.11.2",
+    "discord-html-transcripts": "^3.2.0",
     "discord.js": "^14.15.1",
     "ms": "^2.1.3",
     "quick.db": "^9.1.7",
@@ -20,7 +21,8 @@
   },
   "type": "module",
   "scripts": {
-    "test": "tsx watch bot.ts"
+    "test": "tsx watch bot.ts",
+    "testImg": "tsx watch test.ts"
   },
   "keywords": [],
   "author": "",

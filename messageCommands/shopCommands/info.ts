@@ -4,6 +4,7 @@ import Bot from "bot";
 import { BotMessageCommand } from "modules/command";
 import { formatNumber, getUserID } from "modules/utils";
 import { BaseExceptions } from "modules/exceptions";
+import { Optional, Required } from "modules/usageArgumentTypes";
 import welcomeCard from "modules/image/infoImage";
 
 interface userInfo {
@@ -23,8 +24,8 @@ async function addCommand(message: Message, user: string) {
         else target = message.mentions.members?.first()?.id
 
     
-    let data = await client.db.get(`${target}.info`) as userInfo;
-    if (!data) data = await client.db.set(`${target}.info`, {
+    let data = await client.db.get(`${message.guild?.id}.${target}.info`) as userInfo;
+    if (!data) data = await client.db.set(`${message.guild?.id}.${target}.info`, {
         cout: 0,
         level: 1,
         commands: 0,
@@ -36,7 +37,7 @@ async function addCommand(message: Message, user: string) {
     message.channel.send({
         files: [
             {
-                attachment: await welcomeCard((await message.guild?.members.cache.get(target ?? "")?.fetch()) ?? message.member, data.cout, data.level)
+                attachment: await welcomeCard((await message.guild?.members.cache.get(target ?? "")?.fetch()) ?? message.member, data.cout ? data.cout : 0, data.level ? data.level : 1)
             }
         ]
     })
@@ -47,5 +48,6 @@ export default new BotMessageCommand({
     aliases: ["if"],
     category: "Shop",
     description: "Thông tin bla bla",
+    usage: [Optional("user")],
     run: addCommand
 });

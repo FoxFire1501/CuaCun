@@ -1,9 +1,11 @@
-import { Message } from "discord.js";
+import { GuildMember, Message } from "discord.js";
 import config from "config";
 import Bot from "bot";
 import { BotMessageCommand } from "modules/command";
 import { formatNumber, getUserID } from "modules/utils";
-import { BaseExceptions } from "modules/exceptions";
+import { Optional, Required } from "modules/usageArgumentTypes";
+import { BaseExceptions, GuildExceptions } from "modules/exceptions";
+import addImage from "modules/image/addImage";
 
 interface userInfo {
     cout: number;
@@ -15,10 +17,11 @@ interface userInfo {
 
 async function addCommand(message: Message, user: string, cout: string) {
     const client = message.client as Bot;
+    let isAdd = true;
 
     let target = await getUserID(user);
     if (!target)
-        if (message.mentions.members!.first()) throw new BaseExceptions.UserInputError("user");
+        if (!message.mentions.members!.first()) throw new BaseExceptions.UserInputError("user");
         else target = message.mentions.members?.first()?.id
 
 
@@ -27,20 +30,37 @@ async function addCommand(message: Message, user: string, cout: string) {
     if (!cout) throw new BaseExceptions.UserInputError("cout")
         else if (isNaN(coutT)) throw new BaseExceptions.UserError("Số tiền không xác định")
     
-    let data = await client.db.get(`${target}.info`) as userInfo;
+    if (coutT < 0) isAdd = false;
+        
+    let data = await client.db.get(`${message.guild?.id}.${target}.info`) as userInfo;
+    if (!data) data = await client.db.set(`${message.guild?.id}.${target}.info`, {
+        cout: 0,
+        level: 1,
+        commands: 0,
+        messages: 0,
+        voice_time: 0
+    })
+    const memberTarget = await message.guild?.members.cache.get(target ?? "")?.fetch();
 
 
-    client.db.add(`${target}.info.cout`, (Number(cout) * 1000))
 
-    console.log(await client.db.all())
+    client.db.add(`${message.guild?.id}.${target}.info.cout`, (Number(cout) * 1000))
 
-    message.reply(`${await formatNumber(data.cout) + Number(cout) * 1000}`)
+    message.channel.send({
+        files: [
+            {
+                attachment: await addImage(memberTarget, coutT*1000, isAdd)
+            }
+        ]
+    })
 }
 
 export default new BotMessageCommand({
-    name: "add",
-    aliases: ["a"],
+    name: "money",
+    aliases: ["mon", "m"],
     category: "Shop",
-    description: "Công thêm tiền vào j ko biết",
+    description: "Công hoặc trừ tiền vào j ko biết",
+    usage: [Required("user"), Required("cout")],
+    managerOnly: true,
     run: addCommand
 });

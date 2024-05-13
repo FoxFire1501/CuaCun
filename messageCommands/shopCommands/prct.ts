@@ -2,79 +2,107 @@ import Bot from "bot";
 import config from "config";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { BotMessageCommand } from "modules/command";
+import { BaseExceptions } from "modules/exceptions";
+import { Optional, Required } from "modules/usageArgumentTypes";
+import { formatNumber } from "modules/utils";
 
-async function ctCommand(message: Message) {
+async function ctCommand(message: Message, cout: string) {
     const client = message.client as Bot;
-    const ms = await message.channel.send({
-        content: "",
-        embeds: [
-            {
-                title: "Payment Methods:",
-                fields: [
-                    { name: "**MBBank Le Hai Dang:**", value: `004807902999` },
-                    { name: "**Momo Le Hai Dang:**", value: `0794919029` },
-                    { name: "**CardVip:**", value: `namtrieule2006@gmail.com` }
+    if (cout) {
+        if (isNaN(Number(cout))) throw new BaseExceptions.UserError("Số tiền không hợp lệ")
+        const r = "CUN" + (Math.random() + 1).toString(36).substring(7);
+        const msd = await message.channel.send({
+            embeds: [
+                {
+                    image: { url: `https://vietqr.co/api/generate/mb/004807902999/VIETQR.CO/${Number(cout) * 1000}?style=2&logo=1&isMask=1&bg=61` },
+                    title: "Qr Chuyển Tiền!",
+                    fields: [
+                        { name: "Số tiền:", value: await formatNumber(Number(cout) * 1000) + " VND", inline: true },
+                        { name: "Mã só đơn:", value: r, inline: true }
+                    ]
+                }
+            ]
+        });
 
-                ],
-                footer: { text: client.user?.username ?? "" },
-                timestamp: new Date().toISOString(),
-                color: config.bot.Embed.Color
-            }
-        ],
-        components: [
-            new ActionRowBuilder<ButtonBuilder>().setComponents(
-                new ButtonBuilder()
-                .setCustomId("MB")
-                .setLabel("MB")
-                .setEmoji(config.emojis.mb)
-                .setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                .setCustomId("MOMO")
-                .setLabel("MOMO")
-                .setEmoji(config.emojis.momo)
-                .setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                .setCustomId("CardVip")
-                .setLabel("CardVip")
-                .setEmoji(config.emojis.cardvip)
-                .setStyle(ButtonStyle.Success),
+        const db = await client.db.get(`${message.guild?.id}.dataBank`)
+        if (db) client.db.push(`${message.guild?.id}.dataBank`, r)
+            else client.db.set(`${message.guild?.id}.dataBank`, [r])
+        client.db.set(r, msd.id)
+
+    } else {
+        const ms = await message.channel.send({
+            content: "",
+            embeds: [
+                {
+                    title: "Payment Methods:",
+                    fields: [
+                        { name: "**MBBank Le Hai Dang:**", value: `004807902999`, inline: true },
+                        { name: "**Momo Le Hai Dang:**", value: `0794919029`, inline: true },
+                        { name: "**Timo:**", value: `0788651471`, inline: true }
+                    ],
+                    footer: { text: client.user?.username ?? "" },
+                    timestamp: new Date().toISOString(),
+                    color: config.bot.Embed.Color
+                }
+            ],
+            components: [
+                new ActionRowBuilder<ButtonBuilder>().setComponents(
+                    new ButtonBuilder()
+                    .setCustomId("MB")
+                    .setLabel("MB")
+                    .setEmoji(config.emojis.mb)
+                    .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                    .setCustomId("MOMO")
+                    .setLabel("Momo")
+                    .setEmoji(config.emojis.momo)
+                    .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                    .setCustomId("Timo")
+                    .setLabel("Timo")
+                    .setEmoji(config.emojis.timo)
+                    .setStyle(ButtonStyle.Secondary),
+                )
+            ]
+        });
+    
+        const c = ms.createMessageComponentCollector();
+    
+        async function infoCopy(info: string, data: string) {
+            return new ModalBuilder()
+            .setTitle(info.toUpperCase())
+            .setCustomId("copyinfo")
+            .setComponents(
+                new ActionRowBuilder<TextInputBuilder>()
+                .addComponents(
+                    new TextInputBuilder()
+                    .setLabel("Mời bạn copy")
+                    .setCustomId("copy")
+                    .setStyle(TextInputStyle.Short)
+                    .setValue(data)
+                )
             )
-        ]
-    });
-
-    const c = ms.createMessageComponentCollector();
-
-    async function infoCopy(info: string, data: string) {
-        return new ModalBuilder()
-        .setTitle(info.toUpperCase())
-        .setCustomId("copyinfo")
-        .setComponents(
-            new ActionRowBuilder<TextInputBuilder>()
-            .addComponents(
-                new TextInputBuilder()
-                .setLabel("Mời bạn copy")
-                .setCustomId("copy")
-                .setStyle(TextInputStyle.Short)
-                .setValue(data)
-            )
-        )
-    }
-
-    c.on("collect",async i => {
-        switch (i.customId) {
-            case "MB":
-                i.showModal(await infoCopy(i.customId, "004807902999"))
-                break;
-            case "MOMO":
-                i.showModal(await infoCopy(i.customId, "0794919029"))
-                break;
-            case "CardVip":
-                i.showModal(await infoCopy(i.customId, "namtrieule2006@gmail.com"))
-                break;
-            default:
-                break;
         }
-    })
+    
+        c.on("collect",async i => {
+            switch (i.customId) {
+                case "MB":
+                    i.showModal(await infoCopy(i.customId, "004807902999"))
+                    break;
+                case "MOMO":
+                    i.showModal(await infoCopy(i.customId, "0794919029"))
+                    break;
+                case "CardVip":
+                    i.showModal(await infoCopy(i.customId, "namtrieule2006@gmail.com"))
+                    break;
+                case "Timo":
+                    i.showModal(await infoCopy(i.customId, "0788651471"))
+                    break;
+                default:
+                    break;
+            }
+        })
+    }
 }
 
 export default new BotMessageCommand({
@@ -82,5 +110,6 @@ export default new BotMessageCommand({
     aliases: ["ct"],
     category: "Shop",
     description: "Thông tin chuyển tiền",
+    usage: [Optional("cout")],
     run: ctCommand
 });
