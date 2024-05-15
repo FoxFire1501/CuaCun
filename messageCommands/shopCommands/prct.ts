@@ -14,7 +14,7 @@ async function ctCommand(message: Message, cout: string) {
         const msd = await message.channel.send({
             embeds: [
                 {
-                    image: { url: `https://vietqr.co/api/generate/mb/004807902999/VIETQR.CO/${Number(cout) * 1000}?style=2&logo=1&isMask=1&bg=61` },
+                    image: { url: `https://vietqr.co/api/generate/mb/004807902999/VIETQR.CO/${Number(cout) * 1000}/${r}?style=2&logo=1&isMask=1&bg=61` },
                     title: "Qr Chuyển Tiền!",
                     fields: [
                         { name: "Số tiền:", value: await formatNumber(Number(cout) * 1000) + " VND", inline: true },

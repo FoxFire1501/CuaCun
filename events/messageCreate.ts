@@ -91,6 +91,7 @@ async function messageCommand(message: Message) {
 
         message.reply("Có lỗi xảy ra khi chạy lệnh này :<");
         (await message.client.channels.cache.get(config.bot.channelErr)?.fetch() as TextChannel).send(`\`\`\`js\n${error}\`\`\``)
+        console.log(error)
     }
 }
 

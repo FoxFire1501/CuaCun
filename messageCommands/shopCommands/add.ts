@@ -30,7 +30,7 @@ async function addCommand(message: Message, user: string, cout: string) {
     if (!cout) throw new BaseExceptions.UserInputError("cout")
         else if (isNaN(coutT)) throw new BaseExceptions.UserError("Số tiền không xác định")
     
-    if (coutT < 0) isAdd = false;
+    if (cout.startsWith("-")) isAdd = false;
         
     let data = await client.db.get(`${message.guild?.id}.${target}.info`) as userInfo;
     if (!data) data = await client.db.set(`${message.guild?.id}.${target}.info`, {
@@ -41,15 +41,19 @@ async function addCommand(message: Message, user: string, cout: string) {
         voice_time: 0
     })
     const memberTarget = await message.guild?.members.cache.get(target ?? "")?.fetch();
-
-
-
-    client.db.add(`${message.guild?.id}.${target}.info.cout`, (Number(cout) * 1000))
+    let coutTX;
+    if (isAdd) coutTX = coutT * 1000 + (data.cout ? data.cout : 0)
+        else coutTX = coutT * 1000 - (data.cout ? data.cout : 0)
+    if (coutTX < 0) coutTX = 0;
+    client.db.set(`${message.guild?.id}.${target}.info.cout`, coutTX)
 
     message.channel.send({
-        files: [
+        embeds: [
             {
-                attachment: await addImage(memberTarget, coutT*1000, isAdd)
+                title: `Thông báo biến động | ${memberTarget?.displayName}`,
+                description: `Bạn đã ${isAdd ? "Được công" : "Bị trừ"} vào ví tiêu dùng số tiền \`\`${await formatNumber(coutTX)} VND\`\``,
+                thumbnail: { url: "https://discords.com/_next/image?url=https%3A%2F%2Fcdn.discordapp.com%2Femojis%2F935048366352637952.png%3Fv%3D1&w=64&q=75" },
+                footer: { icon_url: memberTarget?.displayAvatarURL(), text: "Mọi thắc mắc liện hệ Dev" }
             }
         ]
     })

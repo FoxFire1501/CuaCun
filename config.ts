@@ -33,6 +33,8 @@ export default {
         mb: "<:cun_mbbank:1109066410472247378>",
         momo: "<:cun_momo:1109066426200903730>",
         cardvip: "<:cun_cardvip:1109066174127419502>",
-        timo: "<:cun_timo:1237784531994677320>"
+        timo: "<:cun_timo:1237784531994677320>",
+        join: "<:3199blurplejoin:1240370277943087154>",
+        leave: "<:blurple_leave:1240370276265623602>"
     }
 }
