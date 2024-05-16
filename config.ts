@@ -5,7 +5,7 @@ export default {
         Token: "MTIyNjU0MDEwMzgyOTI5NTExNQ.G94j6S.55cN93CWzS1yy97kBptzBFxYwd5VzshOG2-Hq0",
         clientID: "",
         clientSecret: "",
-        prefix: "t.",
+        prefix: ".",
         channelErr: "1230821361539219526",
         Status: {
             lab: "",
