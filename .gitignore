@@ -6,6 +6,7 @@ npm-debug.log*
 # Dependencies
 node_modules/
 
+data/
 # Coverage
 coverage
 
@@ -33,6 +34,7 @@ config.ts
 
 # Data
 data/
+database.sqlite
 
 # Test
 test.ts

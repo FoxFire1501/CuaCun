@@ -25,7 +25,7 @@ async function addCommand(message: Message, user: string, cout: string) {
         else target = message.mentions.members?.first()?.id
 
 
-    let coutT = Number(cout)
+    let coutT = Number(cout) * 1000
 
     if (!cout) throw new BaseExceptions.UserInputError("cout")
         else if (isNaN(coutT)) throw new BaseExceptions.UserError("Số tiền không xác định")
@@ -42,8 +42,8 @@ async function addCommand(message: Message, user: string, cout: string) {
     })
     const memberTarget = await message.guild?.members.cache.get(target ?? "")?.fetch();
     let coutTX;
-    if (isAdd) coutTX = coutT * 1000 + (data.cout ? data.cout : 0)
-        else coutTX = coutT * 1000 - (data.cout ? data.cout : 0)
+    if (isAdd) coutTX = coutT + (data.cout ? data.cout : 0)
+        else coutTX = coutT - (data.cout ? data.cout : 0)
     if (coutTX < 0) coutTX = 0;
     client.db.set(`${message.guild?.id}.${target}.info.cout`, coutTX)
 
@@ -51,7 +51,7 @@ async function addCommand(message: Message, user: string, cout: string) {
         embeds: [
             {
                 title: `Thông báo biến động | ${memberTarget?.displayName}`,
-                description: `Bạn đã ${isAdd ? "Được công" : "Bị trừ"} vào ví tiêu dùng số tiền \`\`${await formatNumber(coutTX)} VND\`\``,
+                description: `Bạn đã ${isAdd ? "Được công" : "Bị trừ"} vào ví tiêu dùng số tiền \`\`${await formatNumber(coutT)} VND\`\``,
                 thumbnail: { url: "https://discords.com/_next/image?url=https%3A%2F%2Fcdn.discordapp.com%2Femojis%2F935048366352637952.png%3Fv%3D1&w=64&q=75" },
                 footer: { icon_url: memberTarget?.displayAvatarURL(), text: "Mọi thắc mắc liện hệ Dev" }
             }
