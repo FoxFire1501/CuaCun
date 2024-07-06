@@ -49,7 +49,8 @@ export async function getUserID(user: string | undefined) {
     
     if (output.startsWith('<@')) output = output.slice(2, -1);
     if (output.startsWith('!')) output = output.slice(1);
-    
+    if (isNaN(Number(output))) output = ""
+
     return output;
 }
 
@@ -59,6 +60,7 @@ export async function getChannelID(channel: string | undefined) {
 
     if (output.startsWith('<#')) output = output.slice(2, -1);
     if (output.startsWith('!')) output = output.slice(1);
+    if (isNaN(Number(output))) output = ""
 
     return output;
 }

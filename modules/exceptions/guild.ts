@@ -10,13 +10,13 @@ export class NoPermissions extends UserError {
 
 export class BotHasNoPermissions extends UserError {
     constructor() {
-        super(" Tôi không có quyền sử dụng lệnh lên người dùng!");
+        super(" Mình không có quyền để tiến hành sử dụng lệnh này!");
     }
 }
 
 export class TargetIsSelf extends UserError {
     constructor() {
-        super(" Tôi không thể sử dụng lệnh lên bản thân!");
+        super(" Mình không thể sử dụng lệnh lên bản thân!");
     }
 }
 
@@ -28,18 +28,18 @@ export class TargetIsAuthor extends UserError {
 
 export class TargetNotFound extends UserError {
     constructor() {
-        super(" Không tìm thấy mục tiêu");
+        super("Mình Không tìm thấy mục tiêu");
     }
 }
 
 export class AuthorRoleIsLower extends UserError {
     constructor() {
-        super(" Bạn không thể sử dụng lệnh lên người này vì họ có quyền cao hơn hoặc bằng bạn!");
+        super(" Bạn không thể sử dụng lệnh này vì họ có quyền cao hơn hoặc bằng bạn!");
     }
 }
 
 export class BotRoleIsLower extends UserError {
     constructor() {
-        super(" Tôi không thể sử dụng lệnh lên người này vì họ có quyền cao hơn hoặc bằng tôi!");
+        super(" Mình không thể sử dụng lệnh này vì họ có quyền cao hơn hoặc bằng mình!");
     }
 }

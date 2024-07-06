@@ -25,7 +25,7 @@ export default async function welcomeCard(member?: GuildMember, cout?: number, l
     context.closePath();
     context.clip();
 
-    context.drawImage(await loadImage(await member?.user.avatarURL({ extension: "jpg" }) ?? "https://cdn.discordapp.com/attachments/1235995536230842529/1235995695001899189/GMnkjTvbgAArb4q.jpg?ex=66404971&is=663ef7f1&hm=304140c881118b5b3c8d97c3e592842f658ccf7ce3cf29c41f8dcac159552cd4&"), 110, 107, 512, 512);
+    context.drawImage(await loadImage(await member?.user.displayAvatarURL({ extension: "jpg" }) ?? "https://cdn.discordapp.com/attachments/1235995536230842529/1235995695001899189/GMnkjTvbgAArb4q.jpg?ex=66404971&is=663ef7f1&hm=304140c881118b5b3c8d97c3e592842f658ccf7ce3cf29c41f8dcac159552cd4&"), 110, 107, 512, 512);
     context.restore();
 
     context.fillStyle = "white";

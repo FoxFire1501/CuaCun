@@ -11,29 +11,37 @@ import config from "config";
 
 async function renameChannelCommand(message: Message<true>, channel?: string, ...args: string[]) {
     if (!message.member?.permissions.has(PermissionFlagsBits.ManageChannels)) throw new GuildExceptions.NoPermissions();
-
-    const bot = message.client as Bot;
-
-    let target = await getChannelID(channel);
-    if (!target)
-        if (!message.mentions.channels.first()) throw new BaseExceptions.UserInputError("channel");
-        else target = message.mentions.channels.first()!.id
     
+    const bot = message.client as Bot;
+    
+    let target = await getChannelID(channel);
+    
+    if (!target)
+        {
+            target = message.mentions.channels.first()?.id || message.channel.id;
+            args = message.content.split(" ").slice(1);
+        } else
     if (!args) throw new BaseExceptions.UserInputError("name")
 
-    const channelTarget = await message.guild.channels.cache.get(target)?.fetch();
-    channelTarget?.edit({
-        name: args.join("-").toLocaleLowerCase()
-    })
+    try {
+        const channelTarget =  message.channel.id == target ? message.channel : await message.guild.channels.cache.get(target)?.fetch();
+    
+        channelTarget?.edit({
+            name: args.join("-").toLocaleLowerCase()
+        })
+        message.reply({
+            embeds: [
+                {
+                    description: `${config.emojis.success} **Đã đổi tên channel <#${channelTarget?.id}> thành công**`,
+                    color: config.bot.Embed.ColorSuccess
+                }
+            ]
+        })
+    } catch {
+        throw new GuildExceptions.BotHasNoPermissions();
+    }
 
-    message.reply({
-        embeds: [
-            {
-                description: `${config.emojis.success} **Đã đổi tên channel <#${channelTarget?.id}> thành công**`,
-                color: config.bot.Embed.ColorSuccess
-            }
-        ]
-    })
+
 
 }
 

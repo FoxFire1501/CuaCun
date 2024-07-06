@@ -9,6 +9,9 @@ import config from "config";
 
 import loadCommands from "handlers/commandLoader";
 import loadEvents from "handlers/eventLoader";
+import botWebLoader from "handlers/botWebLoder";
+import payos from "handlers/payLoader";
+import PayOS from "@payos/node";
 
 interface BotOption extends ClientOptions {
     version: string;
@@ -33,9 +36,11 @@ export default class Bot extends Client {
         this.slashCommands = new Map();
 
         this.db = database;
+        this.payOs = payos;
 
         loadCommands(this);
         loadEvents(this);
+        botWebLoader(this)
     }
 
     public readonly version: string;
@@ -46,6 +51,7 @@ export default class Bot extends Client {
     public readonly messageCommands: Map<string, BotMessageCommand>;
     public readonly slashCommands: Map<string, BotSlashCommand>;
     public readonly db: QuickDB;
+    public readonly payOs: PayOS;
 
     public async getPrefix(guildID: Snowflake): Promise<string> {
         const prefix = this.prefixes.get(guildID);

@@ -6,15 +6,31 @@ import { BaseExceptions } from "modules/exceptions";
 import { Optional, Required } from "modules/usageArgumentTypes";
 import { formatNumber } from "modules/utils";
 
-async function ctCommand(message: Message, cout: string) {
+async function ctCommand(message: Message, cout: string, ad: string) {
     const client = message.client as Bot;
     if (cout) {
+        let adm = {
+            nh: "",
+            stk: ""
+        }
         if (isNaN(Number(cout))) throw new BaseExceptions.UserError("Số tiền không hợp lệ")
         const r = "CUN" + (Math.random() + 1).toString(36).substring(7);
+        if (message.author.id == "1099044499474370670") adm = {
+            nh: "mb",
+            stk: "000000002006"
+        }
+        else if (message.author.id == "772654749736108052") adm = {
+            nh: "vcb",
+            stk: "1042044812"
+        } 
+        else if (message.author.id == "1195381172549722204") adm = {
+            nh: "vcb",
+            stk: "0231000583198"
+        }
         const msd = await message.channel.send({
             embeds: [
                 {
-                    image: { url: `https://vietqr.co/api/generate/mb/004807902999/VIETQR.CO/${Number(cout) * 1000}/${r}?style=2&logo=1&isMask=1&bg=61` },
+                    image: { url: `https://vietqr.co/api/generate/${adm.nh}/${adm.stk}/VIETQR.CO/${Number(cout) * 1000}/${r}?style=2&logo=1&isMask=1&bg=61` },
                     title: "Qr Chuyển Tiền!",
                     fields: [
                         { name: "Số tiền:", value: await formatNumber(Number(cout) * 1000) + " VND", inline: true },
@@ -36,7 +52,7 @@ async function ctCommand(message: Message, cout: string) {
                 {
                     title: "Payment Methods:",
                     fields: [
-                        { name: "**MBBank Le Hai Dang:**", value: `004807902999`, inline: true },
+                        { name: "**MBBank Le Hai Dang:**", value: `000000002006`, inline: true },
                         { name: "**Momo Le Hai Dang:**", value: `0794919029`, inline: true },
                         { name: "**Timo:**", value: `0788651471`, inline: true }
                     ],
@@ -87,7 +103,7 @@ async function ctCommand(message: Message, cout: string) {
         c.on("collect",async i => {
             switch (i.customId) {
                 case "MB":
-                    i.showModal(await infoCopy(i.customId, "004807902999"))
+                    i.showModal(await infoCopy(i.customId, "000000002006"))
                     break;
                 case "MOMO":
                     i.showModal(await infoCopy(i.customId, "0794919029"))

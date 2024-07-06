@@ -7,8 +7,8 @@ import BotEvent from "modules/event";
 async function botReady(client: Client): Promise<any> {
     console.log(`[Login] ${client.user?.username}`);
     client.user?.setPresence({
-        activities: [{ name: `Testing!!`, type: config.bot.Status.type }],
-        status: 'idle'
+        activities: [{ name: `Main on 20/07/2024!!`, type: ActivityType.Custom }],
+        status: "idle"
     })
 }
 
